@@ -4,27 +4,24 @@ const http = require('http');
 const app = express();
 const socketIO = require('socket.io');
 
-// Crear servidor HTTP
+// Crear servidor HTTP y Socket.IO
 const server = http.createServer(app);
-
-// Configurar Socket.IO con CORS
 const io = socketIO(server, {
   cors: {
-    origin: "http://localhost:3000", // Origen permitido (frontend)
-    methods: ["GET", "POST"],         // Métodos permitidos
-    credentials: true                  // Si usas autenticación con cookies
+    origin: "http://localhost:3000", // Origen permitido
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
   }
 });
 
-// Escuchar conexiones de clientes (opcional pero útil para debugging)
+// Ejemplo básico de conexión
 io.on("connection", (socket) => {
-  console.log("Nuevo cliente conectado:", socket.id);
+  console.log("Cliente conectado:", socket.id);
 
-  // Escuchar desconexión
   socket.on("disconnect", () => {
     console.log("Cliente desconectado:", socket.id);
   });
 });
 
-// Exportamos las instancias para usarlas en otros archivos
 module.exports = { app, server, io };

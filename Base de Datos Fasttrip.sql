@@ -69,3 +69,17 @@ CREATE TABLE calificaciones (
     comentario TEXT,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabla de solicitudes de registro pendientes
+CREATE TABLE newregistro (
+    id_registro SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    tipo_usuario VARCHAR(20) CHECK (tipo_usuario IN ('admin', 'cliente', 'comercio', 'conductor')),
+    red_social VARCHAR(100), -- opcional
+    mensaje TEXT,           -- opcional
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado_registro VARCHAR(20) DEFAULT 'pendiente' CHECK (estado_registro IN ('pendiente', 'aprobado', 'rechazado'))
+);

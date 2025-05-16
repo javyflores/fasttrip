@@ -1,32 +1,34 @@
 // backend/controllers/authController.js
 const { findUserByEmail } = require('../models/user');
 
-const login = async (req, res) => {
+async function login(req, res) {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Faltan credenciales' });
+  }
 
   try {
     const user = await findUserByEmail(email);
-    
-    if (!user || user.password !== password) {
-      return res.status(401).json({ success: false, message: 'Email o contraseña incorrectos' });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
     }
 
-    // En un futuro usar JWT aquí
+    // En producción usa bcrypt.compare()
+    if (user.password !== password) {
+      return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
+    }
+
     res.json({
       success: true,
-      user: {
-        id: user.id,
-        nombre: user.nombre,
-        apellido: user.apellido,
-        email: user.email,
-        tipo_usuario: user.tipo_usuario
-      }
+      user
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Error en el servidor' });
+    console.error('Error al iniciar sesión:', error.message);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
-};
+}
 
 module.exports = { login };
