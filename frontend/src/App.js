@@ -1,58 +1,50 @@
 // frontend/src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Componentes
 import Login from './components/Login';
-import RegisterPage from './pages/RegisterPage';
-import UserList from './components/UserList';
-import ProtectedRoute from './components/ProtectedRoute';
-import AdminPage from './pages/AdminPage';
-import ClientPage from './pages/ClientPage';
-import BusinessPage from './pages/BusinessPage';
+//import RegisterUser from './components/RegisterUser';
+import SolregPage from './pages/SolregPage';
 import DriverPage from './pages/DriverPage';
-import 'leaflet/dist/leaflet.css';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Página pública */}
-        <Route path="/login" element={<Login />} />
+        {/* Ruta por defecto */}
         <Route path="/" element={<Login />} />
 
-        {/* Rutas protegidas - Administrador */}
+        {/* Páginas públicas */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/solreg" element={<SolregPage />} />
+
+        {/* Páginas protegidas - Conductores */}
         <Route
-          path="/register"
+          path="/driver"
           element={
-            <ProtectedRoute requiredRole="admin">
-              <RegisterPage />
+            <ProtectedRoute requiredRole="conductor">
+              <DriverPage />
             </ProtectedRoute>
           }
         />
 
-        <Route
-          path="/users"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <UserList />
-            </ProtectedRoute>
-          }
-        />
-
+        {/* Otras páginas protegidas (opcional más adelante) */}
         <Route
           path="/admin"
           element={
             <ProtectedRoute requiredRole="admin">
-              <AdminPage />
+              <div>Admin Dashboard (por definir)</div>
             </ProtectedRoute>
           }
         />
 
-        {/* Rutas por rol */}
         <Route
           path="/client"
           element={
             <ProtectedRoute requiredRole="cliente">
-              <ClientPage />
+              <div>Client Dashboard (por definir)</div>
             </ProtectedRoute>
           }
         />
@@ -61,16 +53,7 @@ function App() {
           path="/business"
           element={
             <ProtectedRoute requiredRole="comercio">
-              <BusinessPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/driver"
-          element={
-            <ProtectedRoute requiredRole="conductor">
-              <DriverPage />
+              <div>Business Dashboard (por definir)</div>
             </ProtectedRoute>
           }
         />

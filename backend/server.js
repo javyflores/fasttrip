@@ -1,25 +1,26 @@
 // backend/server.js
 const express = require('express');
 const cors = require('cors');
-const { app, server, io } = require('./socket'); // Importamos servidor + socket.io desde socket.js
+const { app, server, io } = require('./socket'); // Importamos servidor HTTP + socket.io
 
 // Middlewares
 app.use(cors({
-  origin: "http://localhost:3000", // Permite solo este origen
-  credentials: true                  // Si usas cookies o autenticación
+  origin: "http://localhost:3000",
+  credentials: true
 }));
 app.use(express.json());
 
 // Rutas
-const apiRoutes = require('./routes/api');
+const driverRoutes = require('./routes/driverRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
-const adminRoutes = require('./routes/adminRoutes');
 
-app.use('/api', apiRoutes);
+// Montar rutas en el servidor
+app.use('/api/drivers', driverRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
-app.use('/admin', adminRoutes);
 
 // Puerto
 const PORT = process.env.PORT || 5000;

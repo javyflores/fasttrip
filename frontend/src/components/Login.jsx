@@ -80,7 +80,7 @@ function Login() {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             ¿No tienes cuenta?{' '}
-            <a href="/register" className="text-blue-700 underline">
+            <a href="/solreg" className="text-blue-700 underline">
               Regístrate aquí
             </a>
           </p>

@@ -1,38 +1,52 @@
 // frontend/src/components/map/MapView.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import carIconUrl from '../../assets/icons/car.png';
+import axios from 'axios';
 
-// Icono del vehículo del conductor
 const carIcon = new L.Icon({
   iconUrl: carIconUrl,
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
 });
 
-// Componente principal del mapa
-function MapView({ userLocation, businesses = [] }) {
-  const [position] = useState(userLocation || [10.4987, -66.8945]);
+function MapView({ userLocation }) {
+  const [position, setPosition] = useState(userLocation || [10.4987, -66.8945]);
+  const [nearbyServices, setNearbyServices] = useState([]);
+
+  useEffect(() => {
+    if (userLocation) setPosition(userLocation);
+  }, [userLocation]);
+
+  useEffect(() => {
+    const fetchNearbyServices = async () => {
+      try {
+        const res = await axios.post('http://localhost:5000/api/drivers/nearby-services', {
+          latitud: position[0],
+          longitud: position[1]
+        });
+        setNearbyServices(res.data.services || []);
+      } catch (err) {
+        console.error('Error al cargar servicios cercanos:', err.message);
+      }
+    };
+    fetchNearbyServices();
+  }, [position]);
 
   return (
     <MapContainer center={position} zoom={14} style={{ height: "400px", width: "100%" }}>
-      {/* Capa base del mapa */}
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-      {/* Marcador del conductor */}
+      {/* Ubicación del conductor */}
       <Marker position={position} icon={carIcon}>
-        <Popup>Estoy disponible</Popup>
+        <Popup>Mi ubicación</Popup>
       </Marker>
 
-      {/* Marcadores de comercios afiliados */}
-      {businesses.map((business) => (
-        <Marker
-          key={business.id_usuario}
-          position={[business.latitud, business.longitud]}
-          icon={L.divIcon({ className: 'business-marker' })}
-        >
-          <Popup>{business.nombre_empresa}</Popup>
+      {/* Servicios cercanos */}
+      {nearbyServices.map((service, idx) => (
+        <Marker key={idx} position={[service.origen_lat, service.origen_lng]} icon={carIcon}>
+          <Popup>{service.tipo_carga}</Popup>
         </Marker>
       ))}
     </MapContainer>
